@@ -82,6 +82,16 @@ RUN dos2unix /baserow/backend/docker/docker-entrypoint.sh && \
 HEALTHCHECK --interval=60s CMD ["/bin/bash", "/baserow/backend/docker/docker-entrypoint.sh", "backend-healthcheck"]
 ENTRYPOINT ["/usr/bin/tini", "--", "/bin/bash", "/baserow/backend/docker/docker-entrypoint.sh"]
 
+# Install plugins
+
+USER root
+
+COPY ./plugins/my_baserow_plugin/ $BASEROW_PLUGIN_DIR/my_baserow_plugin/
+RUN /baserow/plugins/install_plugin.sh --folder $BASEROW_PLUGIN_DIR/my_baserow_plugin
+
+USER $UID:$GID
+
+
 FROM core as dev
 
 

@@ -55,6 +55,16 @@ ENTRYPOINT ["/usr/bin/tini", "--", "/bin/bash", "/baserow/web-frontend/docker/do
 HEALTHCHECK --interval=60s CMD ["curl", "-f", "http://localhost:3000/_health/"]
 EXPOSE 3000
 
+# Install plugins
+
+USER root
+
+COPY ./plugins/my_baserow_plugin/ /baserow/plugins/my_baserow_plugin/
+RUN /baserow/plugins/install_plugin.sh --folder /baserow/plugins/my_baserow_plugin
+
+USER $UID:$GID
+
+
 FROM base as dev
 
 # We don't bother running build-local in dev mode as it pre-compiles nuxt which won't
